@@ -38,7 +38,7 @@ class GithubPrivateFileService extends AbstractFileService {
         (err) => {
           if (err) throw err;
           resolve({
-            url: `"localhost:9000/${this.path}/${file.filename}${path.extname(
+            url: `localhost:9000/${this.path}/${file.filename}${path.extname(
               file.originalname
             )}`,
           });
