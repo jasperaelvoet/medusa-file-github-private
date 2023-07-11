@@ -15,13 +15,19 @@ class GithubPrivateFileService extends AbstractFileService {
 
   private readonly path: string;
   private readonly repo: string;
+  private readonly owner: string;
 
   constructor(container, options) {
     super(container);
 
     console.log(options);
 
-    if (!options.path || !options.github_token || !options.repo) {
+    if (
+      !options.path ||
+      !options.github_token ||
+      !options.repo ||
+      !options.owner
+    ) {
       throw new Error("Invalid medusa-file-github-private config");
     }
 
@@ -31,6 +37,7 @@ class GithubPrivateFileService extends AbstractFileService {
 
     this.path = options.path;
     this.repo = options.repo;
+    this.owner = options.owner;
 
     if (!fs.existsSync(this.path)) {
       fs.mkdirSync(this.path);
@@ -40,7 +47,8 @@ class GithubPrivateFileService extends AbstractFileService {
   async upload(file: Express.Multer.File): Promise<FileServiceUploadResult> {
     const base64File = fs.readFileSync(file.path, { encoding: "base64" });
 
-    this.client_.request("PUT /repos/{repo}/contents/{path}", {
+    this.client_.request("PUT /repos/{owner}/{repo}/contents/{path}", {
+      owner: this.owner,
       repo: this.repo,
       path: `${this.path}/${file.filename + path.extname(file.originalname)}`,
       message: "Upload file",
@@ -70,7 +78,21 @@ class GithubPrivateFileService extends AbstractFileService {
   }
 
   async delete(fileData: DeleteFileType): Promise<void> {
-    throw new Error("Method not implemented.");
+    const { data, status } = await this.client_.request(
+      "DELETE /repos/{owner}/{repo}/contents/{path}",
+      {
+        owner: this.owner,
+        repo: this.repo,
+        path: `${this.path}/${fileData.filename}`,
+        sha: fileData.fileKey,
+        message: "Delete file",
+      }
+    );
+    if (data) {
+      return;
+    }
+
+    throw new Error("Unable to delete file");
   }
 
   async getUploadStreamDescriptor(
