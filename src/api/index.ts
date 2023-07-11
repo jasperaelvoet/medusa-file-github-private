@@ -3,10 +3,10 @@ const { Router } = express;
 
 const path = require("path");
 
-export default () => {
+export default (rootDirectory, options) => {
   const router = Router();
 
-  router.use("/images", express.static("images"));
+  router.use(`/${options.path}`, express.static(options.path));
 
   return router;
 };
