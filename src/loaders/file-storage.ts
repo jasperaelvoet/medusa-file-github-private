@@ -1,7 +1,6 @@
-import { promises as fs } from "fs";
+import * as fs from "fs";
 import path from "path";
 import { Octokit } from "octokit";
-
 export default async (
   container,
   options: Record<string, any>
@@ -9,6 +8,10 @@ export default async (
   const client = new Octokit({
     auth: options.github_token,
   });
+
+  if (!fs.existsSync(options.path)) {
+    fs.mkdirSync(options.path);
+  }
 
   const response = await client.request(
     "GET /repos/{owner}/{repo}/contents/{path}",
@@ -28,7 +31,7 @@ export default async (
         const fileContent = Buffer.from(fileContentResponse.data, "base64");
 
         // Write the file content to the local filesystem
-        await fs.writeFile(filePath, fileContent);
+        await fs.writeFileSync(filePath, fileContent);
         console.log(`Downloaded file: ${filePath}`);
       }
     }
