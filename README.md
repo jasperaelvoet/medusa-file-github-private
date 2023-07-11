@@ -1,4 +1,4 @@
-> Note: This plugin is not tested in any proper way, I wrote this for myself to store product images in between deployment, which it does. Please report any issues you encounter to help me (and the community) improve the plugin.
+> Note: This plugin is not tested in any proper way, I wrote this for myself to store product images in between deployment, which it does. Please report any issues you encounter to help me (and the community) improve the plugin.<br/>
 Note 2: This does NOT use GitHub as a cdn, files are served by the backend server.
 # medusa-file-github-private
 
@@ -13,20 +13,20 @@ Note 2: This does NOT use GitHub as a cdn, files are served by the backend serve
 To configure your Medusa server, simply add the following plugin configuration to your `medusa-config.js` file:
 ```
 const plugins = [
-	...
-	
-	{
-		resolve: medusa-file-github-private,
-		options: {
-			path:  "images",
-			github_token:  process.env.GITHUB_TOKEN,
-			repo:  "my_medusa_project",
-			owner:  "jasperaelvoet",
-			backend_url:  process.env.BACKEND_URL,
-		},
-	},
+    ...
 
-	...
+    {
+        resolve: medusa-file-github-private,
+        options: {
+            path:  "images",
+            github_token:  process.env.GITHUB_TOKEN,
+            repo:  "my_medusa_project",
+            owner:  "jasperaelvoet",
+            backend_url:  process.env.BACKEND_URL,
+        },
+    },
+
+    ...
 ]
 ```
 - `path`: Folder where images will be stored in the GitHub repository
