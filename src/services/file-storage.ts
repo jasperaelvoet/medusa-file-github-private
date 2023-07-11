@@ -13,9 +13,10 @@ import path from "path";
 class GithubPrivateFileService extends AbstractFileService {
   client_: Octokit;
 
+  private readonly owner: string;
   private readonly path: string;
   private readonly repo: string;
-  private readonly owner: string;
+  private readonly backend_url: string;
 
   constructor(container, options) {
     super(container);
@@ -26,7 +27,8 @@ class GithubPrivateFileService extends AbstractFileService {
       !options.path ||
       !options.github_token ||
       !options.repo ||
-      !options.owner
+      !options.owner ||
+      !options.backend_url
     ) {
       throw new Error("Invalid medusa-file-github-private config");
     }
@@ -38,6 +40,8 @@ class GithubPrivateFileService extends AbstractFileService {
     this.path = options.path;
     this.repo = options.repo;
     this.owner = options.owner;
+    this.owner = options.owner;
+    this.backend_url = options.backend_url;
 
     if (!fs.existsSync(this.path)) {
       fs.mkdirSync(this.path);
@@ -62,9 +66,9 @@ class GithubPrivateFileService extends AbstractFileService {
         (err) => {
           if (err) throw err;
           resolve({
-            url: `localhost:9000/${this.path}/${file.filename}${path.extname(
-              file.originalname
-            )}`,
+            url: `${this.backend_url}/${this.path}/${
+              file.filename
+            }${path.extname(file.originalname)}`,
           });
         }
       );
@@ -72,27 +76,13 @@ class GithubPrivateFileService extends AbstractFileService {
   }
 
   async uploadProtected(
-    fileData: Express.Multer.File
+    file: Express.Multer.File
   ): Promise<FileServiceUploadResult> {
-    throw new Error("Method not implemented.");
+    return this.upload(file);
   }
 
   async delete(fileData: DeleteFileType): Promise<void> {
-    const { data, status } = await this.client_.request(
-      "DELETE /repos/{owner}/{repo}/contents/{path}",
-      {
-        owner: this.owner,
-        repo: this.repo,
-        path: `${this.path}/${fileData.filename}`,
-        sha: fileData.fileKey,
-        message: "Delete file",
-      }
-    );
-    if (data) {
-      return;
-    }
-
-    throw new Error("Unable to delete file");
+    throw Error("Method not implemented.");
   }
 
   async getUploadStreamDescriptor(

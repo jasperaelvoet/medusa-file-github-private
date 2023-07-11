@@ -1,6 +1,6 @@
 {
   "name": "medusa-file-github-private",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Local file storage with GitHub mirror.",
   "author": "Jasper Aelvoet",
   "license": "MIT",
